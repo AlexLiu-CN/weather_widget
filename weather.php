@@ -38,12 +38,44 @@ function encode_url()
 function decode_weather_json()
 {
     $json_raw = file_get_contents(encode_url());
-    var_dump(json_decode($json_raw, true));
-
+    $weather_result = json_decode($json_raw, true, 6);
+    return $weather_result;
 }
 
+function print_weather($which_day)
+{
+    $weather_result = decode_weather_json();
+    print_r($weather_result['results']['0']['location']['name']);//json输出
+    switch ($which_day) {
+        case 0:
+            echo " 今天";
+            break;
+        case 1:
+            echo " 明天";
+            break;
+        case 2:
+            echo " 后天";
+            break;
+    }
+    echo "  白天：";
+    print_r($weather_result['results']['0']["daily"][$which_day]['text_day']);
+    echo "  夜间：";
+    print_r($weather_result['results']['0']["daily"][$which_day]['text_night']);
+    echo "  温度：";
+    print_r($weather_result['results']['0']["daily"][$which_day]['low']);
+    echo "~";
+    print_r($weather_result['results']['0']["daily"][$which_day]['high']);
+    echo "℃  ";
+    print_r($weather_result['results']['0']["daily"][$which_day]['wind_direction']);
+    echo "风";
+    print_r($weather_result['results']['0']["daily"][$which_day]['wind_scale']);
+    echo "级";
+    echo "\n";
+}
 
-decode_weather_json();
+print_weather(0);
+print_weather(1);
+print_weather(2);
 
 
 ?>

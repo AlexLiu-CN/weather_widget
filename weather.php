@@ -1,10 +1,13 @@
 <?php
+header("Content-Type: text/html;charset=utf-8");
 //获取ip
 function get_client_ipv4(){
-    $ip_check_url='http://whatismyip.akamai.com/';
-    $client_ipv4 = file_get_contents($ip_check_url);
-    //echo $client_ipv4;
-    return $client_ipv4;
+    $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
+    $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
+    // $ip_check_url='http://whatismyip.akamai.com/';
+    //$user_IP = file_get_contents($ip_check_url);
+    //echo $user_IP;
+    return $user_IP;
 }
 get_client_ipv4();
 //生成签名后的url

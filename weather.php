@@ -1,24 +1,23 @@
 <?php
 header("Content-Type: text/html;charset=utf-8");
-//获取ip
-function get_client_ipv4(){
-    $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
-    $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
-    // $ip_check_url='http://whatismyip.akamai.com/';
-    //$user_IP = file_get_contents($ip_check_url);
+
+function get_client_ipv4()
+{//获取ip
+    //$user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
+    //user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];//实际环境用
+    $user_IP = file_get_contents('http://whatismyip.akamai.com/');//测试环境用
     //echo $user_IP;
     return $user_IP;
 }
-get_client_ipv4();
-//生成签名后的url
-function encode_url()
+
+function encode_url()//生成签名后的url
 {
     $public_key = "PQAfIBWzrg7L9gMUw";
     $private_key = "SppbwVqK1iJZ2t9N8";
     $api = 'https://api.seniverse.com/v3/weather/daily.json'; // 接口地址
     $location = get_client_ipv4();
-// 生成签名
-    $param = [
+
+    $param = [// 生成签名
         'ts' => time(),
         'ttl' => 1800,
         'uid' => $public_key,
@@ -31,26 +30,27 @@ function encode_url()
     $param['location'] = $location;
     $param['start'] = 0; // 开始日期。0 = 今天天气
     $param['days'] = 3; // 查询天数，1 = 只查一天
-// 构造url
-    $encoded_weather_url = $api . '?' . http_build_query($param);
-    //echo $encoded_weather_url;
 
+    $encoded_weather_url = $api . '?' . http_build_query($param);// 构造url
+    //echo $encoded_weather_url;
     return $encoded_weather_url;
 }
 
-function decode_weather_json()
+function decode_weather_json()//解析json
 {
     $json_raw = file_get_contents(encode_url());
-    $weather_result = json_decode($json_raw, true, 6);
+    $weather_result = json_decode($json_raw, true, 6);//转为数组，6深度
+
     return $weather_result;
 }
 
-function print_weather($which_day)
+function print_weather($which_day)//打印天气值
 {
+
     echo "<br>";
     $weather_result = decode_weather_json();
     print_r($weather_result['results']['0']['location']['name']);//json输出
-    switch ($which_day) {
+    switch ($which_day) {//天数选择
         case 0:
             echo " 今天 ";
             break;

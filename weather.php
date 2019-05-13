@@ -44,24 +44,24 @@ function decode_weather_json()
 
 function print_weather($which_day)
 {
+    echo "<br>";
     $weather_result = decode_weather_json();
     print_r($weather_result['results']['0']['location']['name']);//json输出
     switch ($which_day) {
         case 0:
-            echo " 今天";
+            echo " 今天 ";
             break;
         case 1:
-            echo " 明天";
+            echo " 明天 ";
             break;
         case 2:
-            echo " 后天";
+            echo " 后天 ";
             break;
     }
-    echo "  白天：";
     print_r($weather_result['results']['0']["daily"][$which_day]['text_day']);
-    echo "  夜间：";
+    echo " /";
     print_r($weather_result['results']['0']["daily"][$which_day]['text_night']);
-    echo "  温度：";
+    echo "  ";
     print_r($weather_result['results']['0']["daily"][$which_day]['low']);
     echo "~";
     print_r($weather_result['results']['0']["daily"][$which_day]['high']);
@@ -70,7 +70,7 @@ function print_weather($which_day)
     echo "风";
     print_r($weather_result['results']['0']["daily"][$which_day]['wind_scale']);
     echo "级";
-    echo "\n";
+    echo "</br>";
 }
 
 print_weather(0);

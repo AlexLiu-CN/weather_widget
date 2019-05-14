@@ -61,24 +61,30 @@ function print_weather($which_day)//打印天气值
             echo " 后天 ";
             break;
     }
-    print_r($weather_result['results']['0']["daily"][$which_day]['text_day']);
-    echo " /";
-    print_r($weather_result['results']['0']["daily"][$which_day]['text_night']);
-    echo "  ";
-    print_r($weather_result['results']['0']["daily"][$which_day]['low']);
-    echo "~";
-    print_r($weather_result['results']['0']["daily"][$which_day]['high']);
-    echo "℃  ";
-    print_r($weather_result['results']['0']["daily"][$which_day]['wind_direction']);
-    echo "风";
-    print_r($weather_result['results']['0']["daily"][$which_day]['wind_scale']);
-    echo "级";
+
+    $weather_day = $weather_result['results']['0']["daily"][$which_day]['text_day'];
+    $weather_night = $weather_result['results']['0']["daily"][$which_day]['text_night'];
+    $weather_temp_low = $weather_result['results']['0']["daily"][$which_day]['low'];
+    $weather_temp_high = $weather_result['results']['0']["daily"][$which_day]['high'];
+    $weather_wind_direction = $weather_result['results']['0']["daily"][$which_day]['wind_direction'];
+    $weather_wind_scale = $weather_result['results']['0']["daily"][$which_day]['wind_scale'];
+    echo $weather_day;
+    //print_r($weather_result['results']['0']["daily"][$which_day]['text_day']);
+    //echo " /";
+    //print_r($weather_result['results']['0']["daily"][$which_day]['text_night']);
+    //echo "  ";
+    //print_r($weather_result['results']['0']["daily"][$which_day]['low']);
+    //echo "~";
+    //print_r($weather_result['results']['0']["daily"][$which_day]['high']);
+    //echo "℃  ";
+    //print_r($weather_result['results']['0']["daily"][$which_day]['wind_direction']);
+    //echo "风";
+    //print_r($weather_result['results']['0']["daily"][$which_day]['wind_scale']);
+    //echo "级";
     echo "</br>";
 }
 
 print_weather(0);
-print_weather(1);
-print_weather(2);
 
 
 ?>

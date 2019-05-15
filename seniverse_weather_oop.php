@@ -21,15 +21,20 @@ class getUserIP
         return ($ip);
     }
 
+    function __construct()
+    {
+        $this->get_client_ipv4();
+    }
+
 }
 
-class seniverse_weather_info
+class get_seniverse_weather_info
 {
-    var $public_key = "PQAfIBWzrg7L9gMUw";
-    var $private_key = "SppbwVqK1iJZ2t9N8";
+    protected $public_key = "PQAfIBWzrg7L9gMUw";
+    protected $private_key = "SppbwVqK1iJZ2t9N8";
     var $api = 'https://api.seniverse.com/v3/weather/daily.json'; // 接口地址
     var $location;
-
+    var $json_api;
     function __construct($location, $days)
     {
         $this->location = $location;
@@ -52,16 +57,90 @@ class seniverse_weather_info
         $param['start'] = 0; // 开始日期。0 = 今天天气
         $param['days'] = $days; // 查询天数，1 = 只查一天
         $encoded_weather_url = $this->api . '?' . http_build_query($param);// 构造url
-        echo $encoded_weather_url;
+        //echo $encoded_weather_url;
         return $encoded_weather_url;
     }
 
 }
 
+class decode__seniverse_weather_info
+{
+    public $encoded_weather_url;
+
+    function __construct($encoded_url, $print_which_day)
+    {
+        $this->encoded_weather_url = $encoded_url;
+        $this->decode_weather_json();
+        $this->print_location();
+        for ($x = 0; $x <= $print_which_day; $x++) {
+            $this->print_weather($x);
+        }
+    }
+
+    function decode_weather_json()//解析json
+    {
+        $json_raw = file_get_contents($this->encoded_weather_url);
+        $weather_result = json_decode($json_raw, true, 6);//转为数组，6深度
+        return $weather_result;
+    }
+
+    function print_location()
+    {//输出城市
+        $all_info = $this->decode_weather_json();
+        $city_name = $all_info['results']['0']['location']['name'];
+        echo $city_name;
+        return $city_name;
+    }
+
+    function print_weather($which_day)//打印天气值，0,1,2
+    {
+        $weather_result = $this->decode_weather_json();
+        switch ($which_day) {//天数选择
+            case 0:
+                echo ":今天:";
+                break;
+            case 1:
+                echo " 明天:";
+                break;
+            case 2:
+                echo " 后天:";
+                break;
+        }
+
+        $weather_day = $weather_result['results']['0']["daily"][$which_day]['text_day'];
+        $weather_night = $weather_result['results']['0']["daily"][$which_day]['text_night'];
+        $weather_temp_low = $weather_result['results']['0']["daily"][$which_day]['low'];
+        $weather_temp_high = $weather_result['results']['0']["daily"][$which_day]['high'];
+        $weather_wind_direction = $weather_result['results']['0']["daily"][$which_day]['wind_direction'];
+        $weather_wind_scale = $weather_result['results']['0']["daily"][$which_day]['wind_scale'];
+        echo $weather_day;
+        echo "/";
+        echo $weather_night;
+        echo " ";
+        echo $weather_temp_low;
+        echo "~";
+        echo $weather_temp_high;
+        echo "℃ ";
+        echo $weather_wind_direction;
+        echo "风";
+        echo $weather_wind_scale;
+        echo "级";
+
+    }
+
+}
+
+
+
+
+
+
 $location = new getUserIP();
 
-$test2 = new seniverse_weather_info($location->get_client_ipv4(), 3);
+$test2 = new get_seniverse_weather_info($location->get_client_ipv4(), 3);
 
+$url = $test2->encode_url(3);
 
+$printall = new decode__seniverse_weather_info($url, 2);
 ?>
 

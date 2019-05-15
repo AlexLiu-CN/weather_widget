@@ -3,10 +3,10 @@ header("Content-Type: text/html;charset=utf-8");
 
 function get_client_ipv4()
 {//获取ip
-    //$user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
-    //user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];//实际环境用
-    $user_IP = file_get_contents('http://whatismyip.akamai.com/');//测试环境用
-    //echo $user_IP;
+    $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
+    $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];//实际环境用
+    //$user_IP = file_get_contents('http://whatismyip.akamai.com/');//测试环境用
+    echo $user_IP;
     return $user_IP;
 }
 

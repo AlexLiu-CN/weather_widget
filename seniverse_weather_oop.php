@@ -4,7 +4,6 @@ header("Content-Type: text/html;charset=utf-8");
 
 class getUserIP
 {
-
     public function get_client_ipv4()
     {//获取ip
         if (getenv("HTTP_CLIENT_IP") && strcasecmp(getenv("HTTP_CLIENT_IP"), "unknown"))
@@ -20,12 +19,6 @@ class getUserIP
         //echo $ip;
         return ($ip);
     }
-
-    function __construct()
-    {
-        $this->get_client_ipv4();
-    }
-
 }
 
 class get_seniverse_weather_info
@@ -33,15 +26,8 @@ class get_seniverse_weather_info
     protected $public_key = "PQAfIBWzrg7L9gMUw";
     protected $private_key = "SppbwVqK1iJZ2t9N8";
     var $api = 'https://api.seniverse.com/v3/weather/daily.json'; // 接口地址
-    var $location;
-    var $json_api;
-    function __construct($location, $days)
-    {
-        $this->location = $location;
-        $this->encode_url($days);
-    }
 
-    public function encode_url($days)//生成签名后的url
+    public function encode_url($location, $HowManyDays)//生成签名后的url(参数：地址/申请几天的天气数据123)
     {
         $param = [// 生成签名
             'ts' => time(),
@@ -53,26 +39,30 @@ class get_seniverse_weather_info
         $sig = base64_encode(hash_hmac('sha1', $sig_data, $this->private_key, TRUE));
 // 拼接 url 中的 get 参数
         $param['sig'] = $sig; // 签名
-        $param['location'] = $this->location;
+        $param['location'] = $location;
         $param['start'] = 0; // 开始日期。0 = 今天天气
-        $param['days'] = $days; // 查询天数，1 = 只查一天
+        $param['days'] = $HowManyDays; // 查询天数
         $encoded_weather_url = $this->api . '?' . http_build_query($param);// 构造url
-        //echo $encoded_weather_url;
         return $encoded_weather_url;
-    }
 
+    }
 }
 
-class decode__seniverse_weather_info
+class decode_seniverse_weather_info
 {
     public $encoded_weather_url;
+    public $decoded_json;//存放解密后的json
 
-    function __construct($encoded_url, $print_which_day)
+    function __construct($encoded_weather_url)
+    {//构造函数：给入api_url数据
+        $this->encoded_weather_url = $encoded_weather_url;
+        $this->decoded_json = $this->decode_weather_json();
+    }
+
+    function print_day($print_howmany_day)//输出几天的数据,输出多天数据时用
     {
-        $this->encoded_weather_url = $encoded_url;
-        $this->decode_weather_json();
         $this->print_location();
-        for ($x = 0; $x <= $print_which_day; $x++) {
+        for ($x = 0; $x <= $print_howmany_day; $x++) {
             $this->print_weather($x);
         }
     }
@@ -86,18 +76,18 @@ class decode__seniverse_weather_info
 
     function print_location()
     {//输出城市
-        $all_info = $this->decode_weather_json();
-        $city_name = $all_info['results']['0']['location']['name'];
+        //$all_info = $this->decode_weather_json();
+        $city_name = $this->decoded_json['results']['0']['location']['name'];
         echo $city_name;
         return $city_name;
     }
 
     function print_weather($which_day)//打印天气值，0,1,2
     {
-        $weather_result = $this->decode_weather_json();
+        $weather_result = $this->decoded_json;
         switch ($which_day) {//天数选择
             case 0:
-                echo ":今天:";
+                echo "今天:";
                 break;
             case 1:
                 echo " 明天:";
@@ -113,6 +103,7 @@ class decode__seniverse_weather_info
         $weather_temp_high = $weather_result['results']['0']["daily"][$which_day]['high'];
         $weather_wind_direction = $weather_result['results']['0']["daily"][$which_day]['wind_direction'];
         $weather_wind_scale = $weather_result['results']['0']["daily"][$which_day]['wind_scale'];
+
         echo $weather_day;
         echo "/";
         echo $weather_night;
@@ -125,22 +116,26 @@ class decode__seniverse_weather_info
         echo "风";
         echo $weather_wind_scale;
         echo "级";
-
     }
 
 }
 
 
+$city = new getUserIP();
+
+$weathere_data = new get_seniverse_weather_info();
+
+$weathere_json = $weathere_data->encode_url($city->get_client_ipv4(), 3);
+
+$output = new decode_seniverse_weather_info($weathere_json);
+$output->print_day(2)
 
 
 
 
-$location = new getUserIP();
 
-$test2 = new get_seniverse_weather_info($location->get_client_ipv4(), 3);
 
-$url = $test2->encode_url(3);
 
-$printall = new decode__seniverse_weather_info($url, 2);
+
 ?>
 

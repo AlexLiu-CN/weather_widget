@@ -61,7 +61,6 @@ class decode_seniverse_weather_info
 
     function print_day($print_howmany_day)//输出几天的数据,输出多天数据时用
     {
-        $this->print_location();
         for ($x = 0; $x <= $print_howmany_day; $x++) {
             $this->print_weather($x);
         }
@@ -78,8 +77,11 @@ class decode_seniverse_weather_info
     {//输出城市
         //$all_info = $this->decode_weather_json();
         $city_name = $this->decoded_json['results']['0']['location']['name'];
+        //echo "document.write(\"";
         echo $city_name;
-        return $city_name;
+        //  echo "\");";
+
+        // return $city_name;
     }
 
     function print_weather($which_day)//打印天气值，0,1,2
@@ -87,13 +89,16 @@ class decode_seniverse_weather_info
         $weather_result = $this->decoded_json;
         switch ($which_day) {//天数选择
             case 0:
+                echo "document.write(\"";
                 echo "今天:";
                 break;
             case 1:
-                echo " 明天:";
+                echo "document.write(\"";
+                echo "明天:";
                 break;
             case 2:
-                echo " 后天:";
+                echo "document.write(\"";
+                echo "后天:";
                 break;
         }
 
@@ -103,39 +108,38 @@ class decode_seniverse_weather_info
         $weather_temp_high = $weather_result['results']['0']["daily"][$which_day]['high'];
         $weather_wind_direction = $weather_result['results']['0']["daily"][$which_day]['wind_direction'];
         $weather_wind_scale = $weather_result['results']['0']["daily"][$which_day]['wind_scale'];
-
-        echo $weather_day;
-        echo "/";
-        echo $weather_night;
-        echo " ";
-        echo $weather_temp_low;
-        echo "~";
-        echo $weather_temp_high;
-        echo "℃ ";
-        echo $weather_wind_direction;
-        echo "风";
-        echo $weather_wind_scale;
-        echo "级";
+        echo $weather_day . "/" . $weather_night . " " . $weather_temp_low . "~" . $weather_temp_high . "℃ " . $weather_wind_direction . "风" . $weather_wind_scale . "级";
+        echo "\");";
     }
 
 }
 
-
-$city = new getUserIP();
-
-$weathere_data = new get_seniverse_weather_info();
-
-$weathere_json = $weathere_data->encode_url($city->get_client_ipv4(), 3);
-
-$output = new decode_seniverse_weather_info($weathere_json);
-$output->print_day(2)
-
-
-
-
-
-
-
-
 ?>
+<?php
+$city = new getUserIP();
+$weathere_data = new get_seniverse_weather_info();
+$weathere_json = $weathere_data->encode_url($city->get_client_ipv4(), 3);
+$output = new decode_seniverse_weather_info($weathere_json);
+echo "document.write(\"" . "<td rowspan='2'>";
+echo $output->print_location() . "</td>\");";
+echo "document.write(\"" . "<td rowspan='2'>" . "<cite>\");";
+echo $output->print_weather(0);
+echo "document.write(\"" . "<br>" . "\");";
+$output->print_weather(1);
+echo "document.write(\"" . "<br>" . "\");";
+$output->print_weather(2);
+echo "document.write(\"" . "</cite></td>\");";
+
+
+
+
+
+
+
+
+
+
+
+
+
 

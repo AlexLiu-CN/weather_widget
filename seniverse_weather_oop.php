@@ -24,7 +24,7 @@ class getUserIP
 class get_seniverse_weather_info
 {
     protected $public_key = "PQAfIBWzrg7L9gMUw";
-    protected $private_key = "SppbwVqK1iJZ2t9N8";
+    protected $private_key = "YOUR PRIVATE KEY";
     var $api = 'https://api.seniverse.com/v3/weather/daily.json'; // 接口地址
 
     public function encode_url($location, $HowManyDays)//生成签名后的url(参数：地址/申请几天的天气数据123)
